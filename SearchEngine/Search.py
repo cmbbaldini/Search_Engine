@@ -30,6 +30,8 @@ class SearchEngine:
         self.loadData = LoadData()
 
     def booleanSearch(self, userQuery: str):
+        """ function computes a boolean search of a user query """
+        
         # same transformation is applied on input query string
         searchWords = [STEMMER.stem(word) for word in
                        re.sub(r"[^a-zA-Z0-9\s]", "", userQuery.lower()).split()]
@@ -51,6 +53,8 @@ class SearchEngine:
 
     @staticmethod
     def tokenizeQuery(userQuery: str) -> dict:
+        """ function tokenizes the users search """
+        
         wordFrequency = Counter()
         searchWords = [STEMMER.stem(word) for word in
                        re.sub(r"[^a-zA-Z0-9\s]", "", userQuery.lower()).split()]
@@ -58,6 +62,8 @@ class SearchEngine:
         return wordFrequency
 
     def getWordPostings(self, wordFrequency: dict) -> dict:
+        """ function calls getPosting fucntion to retreive token in the index and return corresponding docs and tfidfs as dict """
+        
         wordPostings = dict()  # dict of words and their corresponding posting tuples
         for word in wordFrequency.keys():  # iterate through words, find pointer in index, add words/postings to dict
             wordOffsetInIndexFile = self.loadData.getWordPositionInIndex(word)
@@ -69,6 +75,7 @@ class SearchEngine:
 
     @staticmethod
     def buildVectors(wordPostings: dict, wordFrequency: dict, queryVector: list, vectorLen: int) -> dict:
+        """ function builds doc vectors to be used to calculate cosine similarity """
         incrementer = 0
         docVectors = dict()  # store tfidf vector for each document
         for word, postings in wordPostings.items():
@@ -83,6 +90,8 @@ class SearchEngine:
 
     @staticmethod
     def buildHeap(docVectors: dict, queryVector: list, vectorLen: int) -> MaxHeap:
+        """ function builds maxHeap based on cosine similarity """
+        
         cosineSimHeap = MaxHeap()  # store cosine similarity vectors in a heap
         maxZeros = vectorLen - int(ceil(vectorLen * .7))  # set value for max allowable non-matches -- not slow I'm dumb
         for docID, docVector in docVectors.items():  # compute cosine similarity, insert vector object into heap
@@ -93,6 +102,8 @@ class SearchEngine:
 
     @staticmethod
     def top5Results(results, resType=""):
+        """ function prints top 5 matching documents """
+        
         print(resType)
         for i, docID in enumerate(results[:5]):
             print(f"{i + 1}. {docID}")

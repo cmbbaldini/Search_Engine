@@ -31,6 +31,9 @@ class BuildIndex:
         self.tokensProcessed = 0  # unique tokens
 
     def buildIndex(self):
+        """ function iterates over all html files tokenizing each page, building an inverted index as word -> (docnumber, word frequency).  Partial index are written
+        to file when batch size threshold is reached """
+        
         docNumber = 0  # Initial document number
         path = Path(self.webPagesPath)
         for dir in path.iterdir():  # iterate over all directories and their corresponding files
@@ -82,6 +85,8 @@ class BuildIndex:
             self.writePartialIndexesToFile()
 
     def writeData(self):
+        """ writes ID to url mappings to file """
+
         with open("IDUrlMap.json", 'w') as data:
             jsonObj = json.dumps(self.IDUrlMap)
             data.write(jsonObj)
@@ -153,6 +158,8 @@ class BuildIndex:
                 Path(file).unlink()
 
     def calulatetfidf(self, postingsList: list):
+        """ calculates TFIDF to be stored in the final index """
+
         freqToTfidf = list()
         for posting in postingsList:
             tfidf = round((1 + log10(posting[1])) * (log10(self.filesProcessed / len(postingsList))), 2)
@@ -160,6 +167,8 @@ class BuildIndex:
         return freqToTfidf
 
     def check_near_duplicaton(self, word_frequencies):
+        """ check for duplicate or near duplicate pages to be filtered out """
+
         global fingerPrints
         sh = SimHash(word_frequencies)
         for fp in fingerPrints:
