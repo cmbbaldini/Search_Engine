@@ -101,23 +101,13 @@ class SearchEngine:
     def cosineSimilarity(self, userQuery: str) -> list:
         wordFrequency = self.tokenizeQuery(userQuery)
 
-        tStart = process_time()
         wordPostings = self.getWordPostings(wordFrequency)
-        tStop = process_time()
-        print("Elapsed time during loop1 in ms:", (tStop - tStart) * 1000)
 
-        tStart = process_time()
         vectorLen = len(wordPostings.keys())  # get query vector len to initialize docVectors to that size
         queryVector = []  # query tfidf vector
         docVectors = self.buildVectors(wordPostings, wordFrequency, queryVector, vectorLen)
-        tStop = process_time()
-        print("Elapsed time during loop2 in ms:", (tStop - tStart) * 1000)
 
-        tStart = process_time()
         cosineSimHeap = self.buildHeap(docVectors, queryVector, vectorLen)
-        tStop = process_time()
-        print("Elapsed time during loop3 in ms:", (tStop - tStart) * 1000)
-        print(cosineSimHeap.getSize())
 
         return [self.loadData.IDUrlMap[str(heapMax.docID)] for _ in range(5)
                 if (heapMax := cosineSimHeap.extractMax()) is not None]
