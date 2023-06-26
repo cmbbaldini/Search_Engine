@@ -8,10 +8,8 @@ class LoadData:
         with open("IDUrlMap.json", 'r') as URLmap:
             self.IDUrlMap = json.load(URLmap)
         self.createWordBTree()
-        self.indexFile = open("full_index/index.jsonl")
-
-    def __del__(self):
-        self.indexFile.close()
+        with open("full_index/index.jsonl") as indexFile:
+            self.indexFile = indexFile
 
     def createWordBTree(self) -> None:
         """stores words and their corresponding place in the main index in a btree """
