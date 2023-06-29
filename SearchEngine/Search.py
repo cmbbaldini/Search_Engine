@@ -93,7 +93,7 @@ class SearchEngine:
         """ function builds maxHeap based on cosine similarity """
         
         cosineSimHeap = MaxHeap()  # store cosine similarity vectors in a heap
-        maxZeros = vectorLen - int(ceil(vectorLen * .7))  # set value for max allowable non-matches -- not slow I'm dumb
+        maxZeros = vectorLen - int(ceil(vectorLen * .7))  # set value for max allowable non-matches
         for docID, docVector in docVectors.items():  # compute cosine similarity, insert vector object into heap
             if docVector.count(0) <= maxZeros:
                 cosineSimHeap.insert(DocRelevance(docID, dot(queryVector, docVector) /
